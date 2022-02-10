@@ -15,6 +15,8 @@ import { useState } from 'react';
 
 import Frame from '../src/components/Frame';
 
+const EXAMPLE_URL = 'https://wizardly-knuth-d77edd.netlify.app';
+
 export default function Home() {
   const [frameUrl, setFrameUrl] = useState('');
   const [isExample, setIsExample] = useState(false);
@@ -31,7 +33,7 @@ export default function Home() {
   };
 
   const startExample = () => {
-    setFrameUrl('https://poc-iframe-azure-ad-b2c-app2.vercel.app/post-message');
+    setFrameUrl(EXAMPLE_URL);
     setIsExample(true);
     generateFrame();
   };
@@ -131,7 +133,8 @@ export default function Home() {
               width={640}
               height={363}
             />
-          </Box>}
+          </Box>
+        }
       </Container>
     </>
   );

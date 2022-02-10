@@ -54,7 +54,7 @@ const Frame = ({ url, isExample }: { url: string, isExample: boolean }) => {
       >
         Send payload
       </Button>
-      <iframe id="frame" src={url} width={'700px'} height={'400px'}/>
+      <iframe style={{border: '1px dashed gray'}} id="frame" src={url} width={'100%'} height={'700px'}/>
     </>
   );
 };
