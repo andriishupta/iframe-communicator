@@ -57,6 +57,9 @@ export default function Home() {
               Communicator
             </Text>
           </Heading>
+          <Text color={'gray.500'}>
+            Tool for Cross-Origin iframe communication
+          </Text>
           <Stack
             direction={'column'}
             spacing={3}
