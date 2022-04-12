@@ -2,40 +2,32 @@ import Head from 'next/head';
 import Image from 'next/image';
 import {
   Box,
-  Heading,
-  Container,
-  Text,
   Button,
-  Stack,
+  Container,
+  Heading,
   Input,
   InputGroup,
   InputRightElement,
+  Stack,
+  Text,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 
 import Frame from '../src/components/Frame';
-
-const EXAMPLE_URL = 'https://wizardly-knuth-d77edd.netlify.app';
+import Header from '../src/components/Header';
+import Footer from '../src/components/Footer';
 
 export default function Home() {
   const [frameUrl, setFrameUrl] = useState('');
-  const [isExample, setIsExample] = useState(false);
   const [frameEnabled, setFrameEnabled] = useState(false);
 
   const handleFrameUrlChange = (event: any) => {
     setFrameUrl(event.target.value);
     setFrameEnabled(false);
-    setIsExample(false);
   };
 
   const generateFrame = () => {
     setFrameEnabled(true);
-  };
-
-  const startExample = () => {
-    setFrameUrl(EXAMPLE_URL);
-    setIsExample(true);
-    generateFrame();
   };
 
   return (
@@ -45,8 +37,10 @@ export default function Home() {
           href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap"
           rel="stylesheet"
         />
-        <title>IFrame communicator POC</title>
+        <title>🤖 The Communicator</title>
       </Head>
+
+      <Header/>
 
       <Container maxW={'5xl'}>
         <Stack
@@ -56,11 +50,11 @@ export default function Home() {
           py={{ base: 20, md: 20 }}>
           <Heading
             fontWeight={600}
-            fontSize={{ base: '2xl', sm: '3xl', md: '4xl' }}
+            fontSize={{ base: '3xl', sm: '3xl', md: '4xl' }}
             lineHeight={'110%'}>
-            IFrame communicator <br/>
+            🤖 The <br/>
             <Text as={'span'} color={'green.400'}>
-              POC
+              Communicator
             </Text>
           </Heading>
           <Stack
@@ -72,17 +66,17 @@ export default function Home() {
               <Input
                 value={frameUrl}
                 onChange={handleFrameUrlChange}
-                placeholder="Enter iframe URL"
-                pr='4.5rem'
+                placeholder="Enter valid URL with http(s) protocol"
+                pr="4.5rem"
                 rounded={'full'}
               />
               <InputRightElement width="4.5rem" right={1}>
-                <Button colorScheme={'red'} h='1.75rem' size='sm' onClick={() => handleFrameUrlChange({ target: { value: '' } })}>
+                <Button colorScheme={'red'} h="1.75rem" size="sm" onClick={() => handleFrameUrlChange({ target: { value: '' } })}>
                   Clear
                 </Button>
               </InputRightElement>
             </InputGroup>
-            <Box>
+            {!frameUrl || !frameEnabled && <Box>
               <Button
                 colorScheme={'green'}
                 bg={'green.400'}
@@ -91,42 +85,30 @@ export default function Home() {
                 _hover={{
                   bg: 'green.500',
                 }}
-                disabled={!frameUrl || frameEnabled}
+                disabled={!isValidHttpUrl(frameUrl)}
                 onClick={generateFrame}
               >
                 Generate iframe
               </Button>
-              <Button
-                colorScheme={'green'}
-                bg={'green.400'}
-                rounded={'full'}
-                px={6}
-                mx={3}
-                _hover={{
-                  bg: 'green.500',
-                }}
-                disabled={!!frameUrl || frameEnabled}
-                onClick={startExample}
-              >
-                or start from example
-              </Button>
             </Box>
+            }
           </Stack>
 
           {
-            frameEnabled
-              ? <Frame url={frameUrl} isExample={isExample}/>
-              : <>
-                <Text color={'gray.500'}>
-                  Enter URL to generate connection
-                </Text>
-
-              </>
+            frameEnabled &&
+            <Frame url={frameUrl}/>
           }
         </Stack>
 
         {!frameEnabled &&
-          <Box display={'flex'} alignItems={'center'} justifyContent={'center'}>
+          <Box
+            position={'absolute'}
+            bottom={'42px'}
+            right={'0px'}
+            display={'flex'}
+            alignItems={'center'}
+            justifyContent={'center'}
+          >
             <Image
               src="/empty.png"
               alt="waiting meme"
@@ -136,6 +118,20 @@ export default function Home() {
           </Box>
         }
       </Container>
+
+      <Footer/>
     </>
   );
+}
+
+function isValidHttpUrl(string: string) {
+  let url;
+
+  try {
+    url = new URL(string);
+  } catch (_) {
+    return false;
+  }
+
+  return url.protocol === 'http:' || url.protocol === 'https:';
 }

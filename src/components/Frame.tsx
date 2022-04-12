@@ -1,60 +1,91 @@
-import { useState } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState
+} from 'react';
 import {
   Box,
   Button,
-  HStack,
-  Input
+  Input,
+  Textarea
 } from '@chakra-ui/react';
 
-const Frame = ({ url, isExample }: { url: string, isExample: boolean }) => {
-  const [type, setType] = useState(isExample ? 'message-from-parent' : '');
-  const [message, setMessage] = useState(isExample ? 'example-payload-message' : '');
+const Frame = ({ url }: { url: string }) => {
+  const [message, setMessage] = useState<string>('');
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleTypeChange = (event: any) => {
-    setType(event.target.value);
-  };
-  const handleMessageChange = (event: any) => {
-    setMessage(event.target.value);
+  const [messages, setMessages] = useState<string[]>([]);
+
+  const addMessage = (message: string) => {
+    setMessages((prevMessages) => [...prevMessages, JSON.stringify(message)]);
+    textareaRef.current!.scrollTop = textareaRef.current!.scrollHeight
   };
 
-  // @ts-ignore: contentWindow typings
-  const sendPayload = () => document.getElementById('frame')!.contentWindow.postMessage({
-    type,
-    message
-  }, url);
+  useEffect(() => {
+    const handler = (event: MessageEvent) => {
+      const frameOrigin = new URL(url).origin;
+      if (event.origin !== frameOrigin) {
+        return;
+      }
+
+      const message = event.data;
+      addMessage(message);
+    };
+
+    window.addEventListener('message', handler);
+    return () => window.removeEventListener('message', handler);
+  }, [url]);
+
+  const postMessage = () => {
+    let parsedMessage;
+    try {
+      parsedMessage = JSON.parse(message);
+    } catch (e) {
+      parsedMessage = message;
+    }
+    iframeRef.current!.contentWindow!.postMessage(parsedMessage, url);
+  };
 
   return (
     <>
-      <HStack>
-        <Input
-          value={type}
-          onChange={handleTypeChange}
-          placeholder="type"
-          size="sm"
-          rounded={'full'}
+      <Box display={'flex'} justifyContent={'space-evenly'} gap={3}>
+        <Box display={'flex'} flexDirection={'column'} width={'100%'}>
+          <Input
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder={'enter text OR { "valid": "JSON" }'}
+            size="sm"
+            rounded={'full'}
+          />
+          <Button
+            style={{ marginTop: '12px' }}
+            colorScheme={'green'}
+            bg={'green.400'}
+            rounded={'full'}
+            px={6}
+            _hover={{
+              bg: 'green.500',
+            }}
+            onClick={postMessage}
+          >
+            Post Message
+          </Button>
+        </Box>
+        <Textarea
+          ref={textareaRef}
+          value={messages.join('\n')}
+          isDisabled
+          resize={'none'}
+          placeholder="received messages"
         />
-        <Input
-          value={message}
-          onChange={handleMessageChange}
-          placeholder="message"
-          size="sm"
-          rounded={'full'}
-        />
-      </HStack>
-      <Button
-        style={{ marginTop: '12px' }}
-        colorScheme={'green'}
-        bg={'green.400'}
-        rounded={'full'}
-        px={6}
-        _hover={{
-          bg: 'green.500',
-        }}
-        onClick={sendPayload}
-      >
-        Send payload
-      </Button>
-      <iframe style={{border: '1px dashed gray'}} id="frame" src={url} width={'100%'} height={'700px'}/>
+      </Box>
+
+      <iframe
+        ref={iframeRef}
+        src={url}
+        width={'100%'}
+        height={'700px'}/>
     </>
   );
 };
