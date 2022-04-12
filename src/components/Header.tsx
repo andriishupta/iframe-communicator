@@ -24,14 +24,14 @@ const Header = () => {
               <LinkIcon
                 href={'https://link to hashnode article'}
                 src={HashnodeIcon}
-                alt={'twitter share'}
+                alt={'hashnode article'}
               />
             </Flex>
             <Flex marginX={2}>
               <LinkIcon
                 href={'https://link to medium article'}
                 src={MediumIcon}
-                alt={'github repository'}
+                alt={'medium article'}
               />
             </Flex>
           </Flex>
