@@ -106,7 +106,7 @@ export default function Home() {
         {!frameEnabled &&
           <Box
             position={'absolute'}
-            bottom={'42px'}
+            bottom={'48px'}
             right={'0px'}
             display={'flex'}
             alignItems={'center'}

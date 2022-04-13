@@ -22,14 +22,14 @@ const Header = () => {
           <Flex alignItems={'center'}>
             <Flex marginX={2}>
               <LinkIcon
-                href={'https://link to hashnode article'}
+                href={'https://andriishupta.dev/cross-origin-iframe-communication-with-window-post-message'}
                 src={HashnodeIcon}
                 alt={'hashnode article'}
               />
             </Flex>
             <Flex marginX={2}>
               <LinkIcon
-                href={'https://link to medium article'}
+                href={'https://andriishupta.medium.com/cross-origin-iframe-communication-with-window-postmessage-5b8648bbdff0'}
                 src={MediumIcon}
                 alt={'medium article'}
               />
